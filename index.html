@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>  
+        var socket = io.connect('/');
+        socket.on('dhtstate', function(data) {
+            console.log('DHT state: ', data);
+        });
+        
+        socket.on('proximity', function(data) {
+            console.log('Person in front of mirror: ', data);
+        });
+    </script>
+</body>
+
+</html>
