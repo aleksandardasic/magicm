@@ -24,9 +24,6 @@ class DHTState {
 }
 
 var dhtState = new DHTState(0, 0);
-// var proximityState = PROXIMITY_FAR;
-// var proximityLastUpdate = process.hrtime();
-
 
 function getTemperature(socket) {
   sensor.read(DHT_VERSION, DHT_INPUT_PIN, function (err, temperature, humidity) {
@@ -56,9 +53,6 @@ function getTemperature(socket) {
   });
 }
 
-// var firstTime = true;
-
-
 var currentTime = process.hrtime();
 
 function getProximity(socket) {
@@ -80,54 +74,6 @@ function getProximity(socket) {
     }
 
     socket.emit('proximity', value);
-
-    // if (!firstTime) {
-    //   let proximityTimeDifference = process.hrtime(proximityLastUpdate);
-    //   // console.log(`Proximity time difference ${proximityTimeDifference}`);
-
-    //   let proximityTimeDifferenceSeconds = proximityTimeDifference[0];
-
-    //   if (proximityTimeDifferenceSeconds === 0) {
-    //     // console.log(`Proximity time difference is ZERO.`);
-    //     value = PROXIMITY_CLOSE;
-    //   }
-    // }
-    // firstTime = false;
-
-    // proximityLastUpdate = process.hrtime();
-
-    // if (proximityState === value) {
-    //   return;
-    // }
-
-    // proximityState = value;
-
-    // console.log(value);
-    // socket.emit('proximity', proximityState);
-
-
-    // if (value === PROXIMITY_FAR && proximityTimeDifference > 4) {
-    //   console.log(`Proximity time difference: ${proximityTimeDifference}`);
-    //   socket.emit('proximity', value);
-    //   proximityState = value;
-    //   proximityLastUpdate = process.hrtime();
-
-    // } else {
-
-    //   // if (value === PROXIMITY_CLOSE) {
-    //   //   proximityLastUpdate = process.hrtime();
-    //   // }
-
-
-    //   if (proximityState === value) {
-    //     return;
-    //   }
-
-    //   proximityState = value;
-
-    //   socket.emit('proximity', proximityState);
-    // }
-
   });
 
 }
