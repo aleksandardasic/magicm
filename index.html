@@ -14,6 +14,10 @@
         socket.on('proximity', function(data) {
             console.log('Proximity state: ', data);
         });
+        
+        socket.on('calendar', function(data) {
+            console.log('Calendar entries: ', data);
+        })
     </script>
 </body>
 
