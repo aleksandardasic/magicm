@@ -1,14 +1,17 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var sensor = require('node-dht-sensor');
 var gpio = require('rpi-gpio');
 
+app.use('/public', express.static(__dirname));
+
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-const TEMPERATURE_POLLING_MILIS = 20000;
+const TEMPERATURE_POLLING_MILIS = 10000;
 const DHT_VERSION = 22;
 const DHT_INPUT_PIN = 22;
 
@@ -40,9 +43,9 @@ function getTemperature(socket) {
     let isSameTemperature = dhtState.temperature === temperatureFixed;
     let isSameHumidity = dhtState.humidity === humidityFixed;
 
-    if (isSameTemperature && isSameHumidity) {
-      return;
-    }
+    // if (isSameTemperature && isSameHumidity) {
+    //   return;
+    // }
 
     dhtState.temperature = temperatureFixed;
     dhtState.humidity = humidityFixed;
@@ -79,23 +82,28 @@ function getProximity(socket) {
 
 var fs = require('fs');
 var calendarEvents = [];
+var firstRun = true;
+var future = [];
 
 function getCalendar(socket) {
-  getCalendarEntries();
-  let futureEvents = filterFutureEvents(calendarEvents);
+  getCalendarEntries(socket);
+  // future = filterFutureEvents(calendarEvents);
+  // console.log('Calendar events:', calendarEvents);
+  // console.log('Future events: ', future);
 
-  socket.emit('calendar', futureEvents);
+
+  // socket.emit('calendar', future);
 }
 
-function filterFutureEvents(calendarEvents) {
-  var futureEvents = [];
-  var now = new Date();
-  var length = calendarEvents.length;
+function filterFutureEvents(events) {
+  let futureEvents = [];
+  let now = new Date();
+  let length = futureEvents.length;
 
-  for (var i = 0; i < length; i++) {
-    var date = Date.parse(calendarEvents[i].date);
+  for (var i = 0; i < events.length; i++) {
+    var date = Date.parse(events[i].date);
     if (date > now) {
-      futureEvents.push(calendarEvents[i]);
+      futureEvents.push(events[i]);
     }
   }
 
@@ -106,15 +114,17 @@ function filterFutureEvents(calendarEvents) {
   return futureEvents;
 }
 
-function getCalendarEntries() {
+function getCalendarEntries(socket) {
   var input = fs.createReadStream('./mockedCalendar.txt');
-  readLines(input, parseLine);
+  readLines(input, parseLine, socket);
 
   return calendarEvents;
 }
 
-function readLines(input, func) {
+function readLines(input, func, socket) {
   var remaining = '';
+
+  calendarEvents = [];
 
   input.on('data', function (data) {
     remaining += data;
@@ -131,6 +141,10 @@ function readLines(input, func) {
     if (remaining.length > 0) {
       calendarEvents.push(func(remaining));
     }
+    console.log("Calendar events: ", calendarEvents);
+    let futureEvents = filterFutureEvents(calendarEvents);
+    console.log("Future events: ", futureEvents);
+    socket.emit('calendar', futureEvents);
   });
 }
 
