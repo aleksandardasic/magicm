@@ -1,3 +1,6 @@
+const PROXIMITY_CLOSE = false;
+const PROXIMITY_FAR = true;
+
 var gpio = require('rpi-gpio');
 
 var lastUpdateTime = new Date().getTime();

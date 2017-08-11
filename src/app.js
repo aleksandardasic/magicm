@@ -3,11 +3,13 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var temperatureService = require('./temperatureService');
-var proximityService = require('./proximityService');
+var temperatureService = require('./mocks/temperatureServiceMock');
+var proximityService = require('./mocks/proximityServiceMock');
 var calendarService = require('./calendarService');
 
-let staticDir = `${__dirname}/static` 
+let staticDir = `${__dirname}/static`
+
+const TEMPERATURE_POLLING_MILIS = 10000;
 
 app.use('/public', express.static(staticDir));
 
