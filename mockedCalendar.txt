@@ -1,7 +1,0 @@
-10/29/2017,BEG Meeting
-10/28/2017,Retro
-11/01/2016,Rucak
-11/02/2016,Interview
-11/05/2016,Camp
-11/11/2017,NodeJS workshop
-09/05/2016,Proslost

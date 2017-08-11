@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body style="background-color: black; color: white">
+  <div id="container" style="display: none">
+    <div id="temperatureDiv" style="position: absolute; right: 200px; top: 120px"><span id="temperature" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 50px">T</span></div>
+    <div id="humidityDiv" style="position: absolute; right: 250px; top: 360px"><span id="humidity" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 50px">H</span></div>
+    <div style="height: 100px; width: 100px; top: 50px; right: 100px; position: absolute"><img src="public/temperature.jpg" alt="Temperature Widget"></div>
+    <div style="height: 100px; width: 100px; top: 300px; right: 100px; position: absolute"><img src="public/humidity.png" alt="Humidity Widget"></div>
+    <div style="height: 100px; width: 100px; bottom: 150px; left: 50px; position: absolute"><img src="public/logo.jpg" alt="Zuhlke logo"></div>
+    <table id="calendar" style="padding-top: 40px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 30px">
+      <tr style="padding-bottom: 20px">
+        <th>Date</th>
+        <th>Event</th>
+      </tr>
+    </table>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect('/');
+    socket.on('dhtstate', function (data) {
+      console.log('DHT state: ', data);
+
+      temperature = document.querySelector('#temperature')
+      temperature.textContent = data.temperature + " °C";
+
+      humidity = document.querySelector('#humidity')
+      humidity.textContent = data.humidity + " %";
+    });
+
+    var updateTime;
+
+    socket.on('proximity', function (data) {
+      console.log('Proximity state: ', data);
+      document.querySelector("#container").style.display = 'block';
+
+      updateTime = new Date().getTime();
+
+      function checker() {
+        // document.querySelector("#container").style.display = 'none';
+        let currentTime = new Date().getTime();
+
+        if(currentTime - updateTime > 6000) {
+          document.querySelector("#container").style.display = 'none';
+        }
+      }
+
+      setInterval(checker, 1000);
+    });
+
+    socket.on('calendar', function (data) {
+      // console.log('Calendar entries: ', data);
+
+      calendar = document.querySelector("tbody");
+
+      for (i = 0; i < data.length; i++) {
+        var row = document.createElement('TR');
+
+        var td = document.createElement('TD')
+        td.textContent = data[i].date;
+        row.appendChild(td)
+
+        var td2 = document.createElement('TD')
+        td2.style = 'padding-left: 55px';
+        td2.textContent = data[i].event;
+        row.appendChild(td2);
+
+        calendar.appendChild(row);
+
+
+      }
+    })
+
+  </script>
+</body>
+
+</html>
