@@ -11,7 +11,7 @@
   "dependencies": {
     "express": "^4.15.3",
     "rpi-gpio": "^0.8.1",
-    "socket.io": "^2.0.3",
-    "node-dht-sensor": "0.0.32"
+    "socket.io": "^2.0.3"
+    // "node-dht-sensor": "0.0.32"
   }
 }
