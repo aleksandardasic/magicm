@@ -1,69 +1,19 @@
-var fs = require('fs');
+var DB = require('nosql');
+var nosql = DB.load('./db/calendar.nosql');
 
-var calendarEvents = [];
-var future = [];
 
 function getCalendar(socket) {
-  getCalendarEntries(socket);
-}
+  nosql.find().make(function(builder) {
+    var now = new Date();
 
-function filterFutureEvents(events) {
-  let futureEvents = [];
-  let now = new Date();
-  let length = futureEvents.length;
+    // For now filter future events, needs to be changed for current week filter or one month
+    builder.filter(doc => new Date(doc.date) > now);
 
-  for (var i = 0; i < events.length; i++) {
-    var date = Date.parse(events[i].date);
-    if (date > now) {
-      futureEvents.push(events[i]);
-    }
-  }
-
-  futureEvents.sort(function (a, b) {
-    return Date.parse(a.date) - Date.parse(b.date);
-  });
-
-  return futureEvents;
-}
-
-function getCalendarEntries(socket) {
-  var input = fs.createReadStream('./mockedCalendar.txt');
-  readLines(input, parseLine, socket);
-
-  return calendarEvents;
-}
-
-function readLines(input, func, socket) {
-  var remaining = '';
-
-  calendarEvents = [];
-
-  input.on('data', function (data) {
-    remaining += data;
-    var index = remaining.indexOf('\r\n');
-    while (index > -1) {
-      var line = remaining.substring(0, index);
-      remaining = remaining.substring(index + 2);
-      calendarEvents.push(func(line));
-      index = remaining.indexOf('\r\n');
-    }
-  });
-
-  input.on('end', function () {
-    if (remaining.length > 0) {
-      calendarEvents.push(func(remaining));
-    }
-    let futureEvents = filterFutureEvents(calendarEvents);
-    socket.emit('calendar', futureEvents);
-  });
-}
-
-function parseLine(line) {
-  var values = line.split(',');
-  return {
-    date: values[0],
-    event: values[1]
-  }
+    builder.callback(function(err, response) {
+        console.log('users between 20 and 30 years:', response);
+        socket.emit('calendar', response);
+    });
+});
 }
 
 module.exports.getCalendar = getCalendar;
