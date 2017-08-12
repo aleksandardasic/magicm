@@ -10,7 +10,7 @@ function getCalendar(socket) {
     builder.filter(doc => new Date(doc.date) > now);
 
     builder.callback(function(err, response) {
-        console.log('users between 20 and 30 years:', response);
+        console.log('Filtered calendar events: ', response);
         socket.emit('calendar', response);
     });
 });
