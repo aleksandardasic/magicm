@@ -3,9 +3,9 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var temperatureService = require('./mocks/temperatureServiceMock');
-var proximityService = require('./mocks/proximityServiceMock');
-var calendarService = require('./calendarService');
+var temperatureService = require('./services/mocks/temperatureServiceMock');
+var proximityService = require('./services/mocks/proximityServiceMock');
+var calendarService = require('./services/calendarService');
 
 let staticDir = `${__dirname}/static`
 

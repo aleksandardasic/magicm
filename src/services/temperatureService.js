@@ -1,5 +1,5 @@
 var sensor = require('node-dht-sensor');
-var DHTState = require('./dhtstate')
+var DHTState = require('../dtos/dhtstate')
 
 const DHT_VERSION = 22;
 const DHT_INPUT_PIN = 22;
