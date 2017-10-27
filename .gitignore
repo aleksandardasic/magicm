@@ -1,3 +1,4 @@
 node_modules/
 node-dht-sensor/
 .vscode/
+dist/
